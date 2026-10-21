@@ -1,0 +1,9 @@
+{
+  "name": "Kela Counter",
+  "short_name": "Kela",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFDF5",
+  "theme_color": "#000000",
+  "icons": [{ "src": "/banana.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
