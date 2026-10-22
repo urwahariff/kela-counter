@@ -479,6 +479,9 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values ('avatars', 'avatars', true, 1048576, array['image/webp','image/jpeg','image/png'])
 on conflict (id) do nothing;
 
+-- Photo uploads overwrite (upsert), which needs to read the existing file first
+create policy "avatars: read" on storage.objects for select
+  using (bucket_id = 'avatars');
 create policy "avatars: upload own" on storage.objects for insert to authenticated
   with check (bucket_id = 'avatars' and name = auth.uid()::text || '.webp');
 create policy "avatars: update own" on storage.objects for update to authenticated

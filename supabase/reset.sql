@@ -13,6 +13,7 @@ exception when others then null;
 end $$;
 
 -- Photo rules (the photo bucket itself is kept)
+drop policy if exists "avatars: read" on storage.objects;
 drop policy if exists "avatars: upload own" on storage.objects;
 drop policy if exists "avatars: update own" on storage.objects;
 drop policy if exists "avatars: delete own" on storage.objects;
