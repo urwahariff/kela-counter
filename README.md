@@ -8,7 +8,7 @@ A mobile-first React app (Vite) on Supabase: Google sign-in, Postgres with row-l
 supabase/setup.sql   the whole database: tables, rules, functions, weekly jobs, photo bucket
 src/pages/           one file per screen
 src/lib/             Supabase client, sign-in, game rules, share-card renderer
-public/soch-lo.png   the self-report cutout
+public/soch-lo.webp  the self-report cutout
 ```
 
 ---
@@ -135,3 +135,10 @@ All game rules live in the database (`supabase/setup.sql`), so nobody can cheat 
 - **Share card layout**: `src/lib/shareCard.js`
 - **Self-report cutout**: replace `public/soch-lo.png`
 - **Look and feel**: `src/styles.css`
+
+---
+
+## Desktop and link previews
+
+- **Desktop layout** kicks in at 900px wide: realms show as a grid, the realm page puts the report panel beside the leaderboard, and sheets open as centred pop-ups. On a laptop, `1` `2` `3` set severity, `Enter` reports and `Esc` closes pop-ups.
+- **Link previews**: WhatsApp and other apps show `public/og.png` when someone pastes an invite link. The tags need the site's full address. On Vercel this is filled in automatically from your production domain. If you add a custom domain, also add an environment variable `VITE_SITE_URL` = `https://your-domain.com` and redeploy.

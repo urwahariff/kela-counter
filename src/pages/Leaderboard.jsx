@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { friendlyError, supabase } from '../lib/supabase.js';
 import { useAuth } from '../lib/auth.jsx';
 import { daysToReset, hoursLeft, HISTORY_LABELS, kele, splitKele, realmWeek } from '../lib/kela.js';
-import { Avatar, BottomNav, ErrorBox, Loading, TopBar } from '../components/ui.jsx';
+import { Avatar, BottomNav, ErrorBox, Loading, TopBar, useEscape, useTitle, useWide } from '../components/ui.jsx';
+import { ReportPanel } from './Report.jsx';
 import { CopyButton, inviteLink, shareOnWhatsApp } from './CreateRealm.jsx';
 
 function Big({ half, size = 26, frac = 14 }) {
@@ -23,6 +24,11 @@ export default function Leaderboard() {
   const [note, setNote] = useState('');
   const [settings, setSettings] = useState(false);
   const [leaveStep, setLeaveStep] = useState('idle');
+  const wide = useWide();
+  const location = useLocation();
+  const closeSettings = useCallback(() => setSettings(false), []);
+  useEscape(settings, closeSettings);
+  useTitle(realm ? realm.name : 'Realm');
 
   const load = useCallback(async () => {
     const [r, lb, p, ls] = await Promise.all([
@@ -74,8 +80,8 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className="screen">
-      <TopBar back="/" kicker="REALM" title={realm.name}
+    <div className="screen wide">
+      <TopBar back="/" kicker="REALM" title={realm.name} nav={{ active: 'realms' }}
         right={<div className="row gap8">
           <div className="topchip">WEEK {realmWeek(realm.created_at)}</div>
           <button className="iconbtn yellow" aria-label="Realm settings" onClick={() => { setSettings(true); setLeaveStep('idle'); }}>
@@ -85,6 +91,8 @@ export default function Leaderboard() {
       <div className="ticker">RESET: MONDAY 12:00 AM PKT // {daysToReset()} DAYS LEFT // RESET: MONDAY 12:00 AM PKT</div>
 
       <div className="content withnav">
+       <div className="split">
+        <div className="col" style={{ gap: 16, minWidth: 0 }}>
         <div className="row between" style={{ alignItems: 'flex-end' }}>
           <h1 className="h1">Weekly<br />kele</h1>
           <div className="tiny" style={{ textAlign: 'right', lineHeight: 1.4 }}>LAST WEEK'S<br />SULTAN: {lastSultan ? lastSultan.toUpperCase() : '—'}</div>
@@ -178,13 +186,20 @@ export default function Leaderboard() {
             ))}
           </div>
         )}
+        </div>
+        {wide && (
+          <div className="side">
+            <ReportPanel embedded id={id} realm={realm} members={rows} onReported={load} autoFocus={Boolean(location.state?.focusReport)} />
+          </div>
+        )}
+       </div>
       </div>
 
       <BottomNav active="realms" kelaTo={`/realm/${id}/report`} />
 
       {settings && (
         <div className="overlay" onClick={(e) => e.target === e.currentTarget && setSettings(false)}>
-          <div role="dialog" aria-label="Realm settings" className="sheet paper" style={{ gap: 14 }}>
+          <div role="dialog" aria-modal="true" aria-label="Realm settings" className="sheet paper" style={{ gap: 14 }}>
             <div className="row between" style={{ alignItems: 'flex-start' }}>
               <div className="col gap6"><div className="label">Realm settings</div><div className="h2" style={{ fontSize: 28 }}>{realm.name}</div></div>
               <button className="chipbtn head" style={{ width: 40, fontSize: 18 }} aria-label="Close settings" onClick={() => setSettings(false)}>X</button>

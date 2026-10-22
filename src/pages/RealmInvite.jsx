@@ -3,9 +3,10 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { friendlyError, supabase } from '../lib/supabase.js';
 import { signInWithGoogle, useAuth } from '../lib/auth.jsx';
 import { kele } from '../lib/kela.js';
-import { BananaBg, ErrorBox, IconSvg, Loading, TopBar } from '../components/ui.jsx';
+import { BananaBg, ErrorBox, IconSvg, Loading, TopBar, useTitle } from '../components/ui.jsx';
 
 export default function RealmInvite() {
+  useTitle('Join a realm');
   const { code } = useParams();
   const { ready, session, profile } = useAuth();
   const nav = useNavigate();

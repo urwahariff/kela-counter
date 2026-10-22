@@ -3,7 +3,7 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { avatarUrl, friendlyError, supabase } from '../lib/supabase.js';
 import { useAuth } from '../lib/auth.jsx';
 import { COLORS, ICONS } from '../lib/kela.js';
-import { ErrorBox, IconSvg, Loading, TopBar } from '../components/ui.jsx';
+import { ErrorBox, IconSvg, Loading, TopBar, useTitle } from '../components/ui.jsx';
 
 // Square-crop and compress a photo to a 400x400 WebP on the phone
 async function compressPhoto(file) {
@@ -16,6 +16,7 @@ async function compressPhoto(file) {
 }
 
 export default function ProfileSetup() {
+  useTitle('Your profile');
   const { ready, session, profile, refreshProfile } = useAuth();
   const [params] = useSearchParams();
   const next = params.get('next') || '/';

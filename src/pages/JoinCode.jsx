@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BananaBg, TopBar } from '../components/ui.jsx';
+import { BananaBg, TopBar, useTitle } from '../components/ui.jsx';
 
 export default function JoinCode() {
+  useTitle('Join with a code');
   const [code, setCode] = useState('');
   const nav = useNavigate();
   const full = code.length === 6;

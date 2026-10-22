@@ -1,18 +1,21 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { configured } from './lib/supabase.js';
 import { AuthProvider, RequireProfile, takeNext, useAuth } from './lib/auth.jsx';
 import { Loading } from './components/ui.jsx';
 import Landing from './pages/Landing.jsx';
 import Home from './pages/Home.jsx';
-import JoinCode from './pages/JoinCode.jsx';
-import RealmInvite from './pages/RealmInvite.jsx';
-import ProfileSetup from './pages/ProfileSetup.jsx';
-import CreateRealm from './pages/CreateRealm.jsx';
-import Leaderboard from './pages/Leaderboard.jsx';
-import Report from './pages/Report.jsx';
-import MyProfile from './pages/MyProfile.jsx';
-import { Privacy, Terms } from './pages/Legal.jsx';
+
+// Every other screen is downloaded only when it's opened
+const JoinCode = lazy(() => import('./pages/JoinCode.jsx'));
+const RealmInvite = lazy(() => import('./pages/RealmInvite.jsx'));
+const ProfileSetup = lazy(() => import('./pages/ProfileSetup.jsx'));
+const CreateRealm = lazy(() => import('./pages/CreateRealm.jsx'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard.jsx'));
+const Report = lazy(() => import('./pages/Report.jsx'));
+const MyProfile = lazy(() => import('./pages/MyProfile.jsx'));
+const Privacy = lazy(() => import('./pages/Legal.jsx').then((m) => ({ default: m.Privacy })));
+const Terms = lazy(() => import('./pages/Legal.jsx').then((m) => ({ default: m.Terms })));
 
 function AuthReturn() {
   const { ready, session, profile } = useAuth();
@@ -49,6 +52,7 @@ export default function App() {
   if (!configured) return <NotConfigured />;
   return (
     <AuthProvider>
+      <Suspense fallback={<Loading />}>
       <Routes>
         <Route path="/" element={<Root />} />
         <Route path="/auth" element={<AuthReturn />} />
@@ -63,6 +67,7 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="*" element={<Root />} />
       </Routes>
+      </Suspense>
     </AuthProvider>
   );
 }
