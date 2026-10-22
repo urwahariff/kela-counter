@@ -67,6 +67,12 @@ export function weekNumber(date = new Date()) {
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
 }
+// The realm's own week count: Week 1 = the week (Mon-Sun, PKT) the realm was created
+export function realmWeek(createdAt, date = new Date()) {
+  if (!createdAt) return 1;
+  const diff = pktWeekStart(date).getTime() - pktWeekStart(new Date(createdAt)).getTime();
+  return Math.max(1, Math.round(diff / (7 * 86400000)) + 1);
+}
 export function daysToReset(date = new Date()) {
   const next = pktWeekStart(date).getTime() + 7 * 86400000;
   return Math.max(1, Math.ceil((next - date.getTime()) / 86400000));

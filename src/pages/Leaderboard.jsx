@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { friendlyError, supabase } from '../lib/supabase.js';
 import { useAuth } from '../lib/auth.jsx';
-import { daysToReset, hoursLeft, HISTORY_LABELS, kele, splitKele, weekNumber } from '../lib/kela.js';
+import { daysToReset, hoursLeft, HISTORY_LABELS, kele, splitKele, realmWeek } from '../lib/kela.js';
 import { Avatar, BottomNav, ErrorBox, Loading, TopBar } from '../components/ui.jsx';
 import { CopyButton, inviteLink, shareOnWhatsApp } from './CreateRealm.jsx';
 
@@ -77,7 +77,7 @@ export default function Leaderboard() {
     <div className="screen">
       <TopBar back="/" kicker="REALM" title={realm.name}
         right={<div className="row gap8">
-          <div className="topchip">WEEK {weekNumber()}</div>
+          <div className="topchip">WEEK {realmWeek(realm.created_at)}</div>
           <button className="iconbtn yellow" aria-label="Realm settings" onClick={() => { setSettings(true); setLeaveStep('idle'); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M3 10h4v4H3zM10 10h4v4h-4zM17 10h4v4h-4z" /></svg>
           </button>

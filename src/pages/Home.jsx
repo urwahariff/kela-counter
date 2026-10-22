@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { friendlyError, supabase } from '../lib/supabase.js';
 import { useAuth } from '../lib/auth.jsx';
-import { daysToReset, kele, weekNumber, BANANA_PATH } from '../lib/kela.js';
+import { daysToReset, kele, BANANA_PATH } from '../lib/kela.js';
 import { Avatar, BottomNav, ErrorBox, Loading, TopBar } from '../components/ui.jsx';
 
 export default function Home() {
@@ -57,7 +57,7 @@ export default function Home() {
       <div className="content withnav" style={{ gap: 14 }}>
         <div className="row between" style={{ alignItems: 'flex-end' }}>
           <h1 className="h1">Your<br />realms</h1>
-          <div className="tiny" style={{ textAlign: 'right', lineHeight: 1.4 }}>WEEK {weekNumber()}<br />{daysToReset()} DAYS TO RESET</div>
+          <div className="tiny" style={{ textAlign: 'right', lineHeight: 1.4 }}>RESET MONDAY<br />{daysToReset()} DAYS LEFT</div>
         </div>
 
         <ErrorBox>{err}</ErrorBox>

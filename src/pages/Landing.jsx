@@ -47,7 +47,7 @@ export default function Landing() {
 
         <div className="row gap14" style={{ flex: 1, minHeight: 300 }}>
           <div style={{ width: 170, height: 302, flexShrink: 0, border: '3px solid #000', background: 'var(--paper)', boxShadow: '6px 6px 0 #000', display: 'flex', flexDirection: 'column', transform: 'rotate(-4deg)' }} aria-hidden="true">
-            <div className="row between" style={{ background: '#000', color: 'var(--banana)', padding: '4px 8px', fontSize: 8, fontWeight: 700 }}><span>KELA ALERT</span><span>WEEK 43</span></div>
+            <div className="row between" style={{ background: '#000', color: 'var(--banana)', padding: '4px 8px', fontSize: 8, fontWeight: 700 }}><span>KELA ALERT</span><span>WEEK 1</span></div>
             <div className="col gap6" style={{ flex: 1, padding: 8, minHeight: 0 }}>
               <div className="row gap6">
                 <div className="avatar" style={{ width: 30, height: 30, borderWidth: 2, background: 'var(--pink)' }}>

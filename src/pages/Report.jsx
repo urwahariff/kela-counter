@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { avatarUrl, friendlyError, supabase } from '../lib/supabase.js';
 import { useAuth } from '../lib/auth.jsx';
-import { keleStamp, kele, SEVERITIES, weekNumber } from '../lib/kela.js';
+import { keleStamp, kele, SEVERITIES, realmWeek } from '../lib/kela.js';
 import { drawShareCard, saveAndShare } from '../lib/shareCard.js';
 import { Banana, ErrorBox, IconSvg, Loading, TopBar } from '../components/ui.jsx';
 
@@ -68,7 +68,7 @@ export default function Report() {
     setDone({
       eaterName: target.name, color: target.color, icon: target.icon,
       photoUrl: target.photo_path && target.photo_on_cards ? avatarUrl(target.photo_path) : null,
-      week: weekNumber(), label: SEVERITIES[severity - 1].label,
+      week: realmWeek(realm.created_at), label: SEVERITIES[severity - 1].label,
       stamp: counted ? keleStamp(data.half_kele) : 'PENDING',
       totalKele: kele(target.all_time_half + (counted ? data.half_kele : 0)),
       realmName: realm.name, severity, isSelf
