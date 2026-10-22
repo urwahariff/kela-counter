@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../lib/auth.jsx';
 import { dayLabel, HISTORY_LABELS, keleStamp, splitKele } from '../lib/kela.js';
-import { Avatar, Banana, BottomNav, Loading, TopBar } from '../components/ui.jsx';
+import { Avatar, Banana, BottomNav, Loading, TopBar, useTitle } from '../components/ui.jsx';
 
 function Stat({ half, number, label, dark }) {
   const s = half !== undefined ? splitKele(half) : { whole: String(number), frac: '' };
@@ -20,6 +20,7 @@ export default function MyProfile() {
   const [stats, setStats] = useState(null);
   const [history, setHistory] = useState([]);
   const [range, setRange] = useState('week');
+  useTitle('My profile');
 
   useEffect(() => {
     Promise.all([supabase.rpc('my_stats'), supabase.rpc('my_history')]).then(([s, h]) => {
@@ -33,9 +34,11 @@ export default function MyProfile() {
   const list = range === 'week' ? history.filter((h) => h.this_week) : history;
 
   return (
-    <div className="screen">
-      <TopBar right={<Link to="/setup" className="topchip">EDIT</Link>} />
+    <div className="screen mid">
+      <TopBar right={<Link to="/setup" className="topchip">EDIT</Link>} nav={{ active: 'me' }} />
       <div className="content withnav" style={{ gap: 14 }}>
+       <div className="profgrid">
+        <div className="col" style={{ gap: 14, minWidth: 0 }}>
         <div className="card yellow shadow row gap14" style={{ padding: 14 }}>
           <div style={{ transform: 'rotate(-3deg)' }}><Avatar person={profile} size={80} iconSize={48} /></div>
           <div className="col gap6 grow minw0">
@@ -64,8 +67,9 @@ export default function MyProfile() {
             </div>
           </div>
         </div>
+        </div>
 
-        <div className="col gap8">
+        <div className="col gap8" style={{ minWidth: 0 }}>
           <div className="row between">
             <div className="label">Kela history</div>
             <div className="row" role="group" aria-label="History range">
@@ -93,6 +97,7 @@ export default function MyProfile() {
             ))}
           </div>
         </div>
+       </div>
 
         <button className="linkbtn" onClick={signOut}>Sign out</button>
       </div>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { TopBar } from '../components/ui.jsx';
+import { TopBar, useTitle } from '../components/ui.jsx';
 
 const CONTACT = 'urwaharif9@gmail.com';
 const UPDATED = '22 October 2026';
@@ -25,6 +25,7 @@ function Page({ title, children }) {
 const H = ({ children }) => <h2 className="h2" style={{ fontSize: 18, marginTop: 8 }}>{children}</h2>;
 
 export function Privacy() {
+  useTitle('Privacy');
   return (
     <Page title="Privacy">
       <p>Kela Counter is a game for friend groups. This page explains what it stores and who can see it.</p>
@@ -54,6 +55,7 @@ export function Privacy() {
 }
 
 export function Terms() {
+  useTitle('Terms');
   return (
     <Page title="Terms">
       <p>By using Kela Counter you agree to these simple rules.</p>

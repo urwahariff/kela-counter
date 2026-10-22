@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { friendlyError, supabase } from '../lib/supabase.js';
 import { useAuth } from '../lib/auth.jsx';
 import { COLORS } from '../lib/kela.js';
-import { ErrorBox, TopBar } from '../components/ui.jsx';
+import { ErrorBox, TopBar, useTitle } from '../components/ui.jsx';
 
 export function inviteLink(code) {
   return `${window.location.origin}/r/${code}`;
@@ -24,6 +24,7 @@ export function CopyButton({ text }) {
 }
 
 export default function CreateRealm() {
+  useTitle('Start a realm');
   const { profile } = useAuth();
   const [name, setName] = useState('');
   const [color, setColor] = useState('#8EC5FF');

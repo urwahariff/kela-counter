@@ -137,6 +137,81 @@ input[type=range]::-moz-range-thumb { width: 22px; height: 22px; background: var
 .loading svg { animation: wob 0.8s ease-in-out infinite alternate; }
 @keyframes wob { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
 
+/* Desktop nav (inside the top bar) */
+.desknav { display: flex; align-items: center; gap: 8px; }
+.desknav > a { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border: 2px solid var(--paper); color: var(--paper); text-decoration: none; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+.desknav > a.on { background: var(--paper); color: var(--ink); }
+.deskkela { height: 40px; padding: 0 16px; border: 3px solid var(--paper); background: var(--banana); color: var(--ink); box-shadow: 3px 3px 0 var(--pink); font-family: var(--head); font-size: 15px; display: flex; align-items: center; text-decoration: none; white-space: nowrap; transform: rotate(-2deg); transition: transform .06s, box-shadow .06s; }
+.deskkela.disabled { background: var(--off); color: var(--offtext); border-style: dashed; box-shadow: none; }
+
+/* Keyboard hint, desktop only */
+.kbdhint { display: none; }
+kbd { font-family: var(--mono); font-size: 10px; font-weight: 700; border: 2px solid var(--ink); background: #fff; padding: 0 4px; box-shadow: 2px 2px 0 var(--ink); }
+.sevlabels > button { background: none; border: 0; padding: 4px 0; font-size: 10px; font-weight: 700; }
+.sevlabels > button[aria-pressed=true] { text-decoration: underline; text-decoration-thickness: 2px; }
+
+/* Layout helpers that only change on desktop */
+.realmgrid, .homeactions { display: flex; flex-direction: column; gap: 14px; }
+.homeactions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.split, .profgrid, .landgrid { display: flex; flex-direction: column; gap: 16px; }
+.landticker { margin: 0 -16px; }
+.realmcard { transition: transform .06s, box-shadow .06s; }
+
+/* Mouse users: buttons physically press on hover */
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not(:disabled):not(.disabled):not(.dashed):not(.white) { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ink); }
+  .btn.black:hover:not(:disabled) { box-shadow: 2px 2px 0 var(--pink); }
+  .btn.dashed:hover:not(:disabled), .btn.white:hover:not(:disabled) { background: var(--banana); }
+  .kelabtn:hover:not(.disabled), .deskkela:hover:not(.disabled) { transform: rotate(-2deg) translate(3px, 3px); box-shadow: none; }
+  .tile:hover:not(.on) { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+  .realmcard:hover { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ink) !important; }
+  .chipbtn:hover, .topchip:hover { background: var(--banana); color: var(--ink); }
+  .desknav > a:hover:not(.on) { background: var(--banana); color: var(--ink); border-color: var(--banana); }
+  .iconbtn:hover { background: var(--pink); }
+  .linkbtn:hover { color: var(--pink); }
+}
+
+/* ---------- Desktop (900px and up) ---------- */
+@media (min-width: 900px) {
+  body {
+    background-color: var(--banana);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='.14' stroke-width='1.3' stroke-linejoin='round'%3E%3Cpath transform='translate(10 14) rotate(-18 24 24) scale(2)' d='M3 12c3 7 14 8 19-5-1.2-.2-2.2 0-3 .8C16 13.5 9.5 15 5 11.2 4.2 11 3.5 11.3 3 12z'/%3E%3Cpath transform='translate(64 66) rotate(150 24 24) scale(2)' d='M3 12c3 7 14 8 19-5-1.2-.2-2.2 0-3 .8C16 13.5 9.5 15 5 11.2 4.2 11 3.5 11.3 3 12z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  .screen { max-width: 600px; min-height: calc(100dvh - 48px); margin: 24px auto; border: 3px solid var(--ink); box-shadow: 10px 10px 0 var(--ink); overflow: visible; }
+  .screen.mid { max-width: 920px; }
+  .screen.wide { max-width: 1200px; }
+  .screen > .topbar { top: 0; }
+  .content { padding: 28px 32px 36px; gap: 18px; }
+  .content.withnav { padding-bottom: 36px; }
+  .h1 { font-size: 46px; }
+  .topbar { min-height: 72px; padding: 10px 24px; }
+  .topbar-title { font-size: 24px; }
+  .ticker, .strip { padding-left: 24px; padding-right: 24px; }
+  .kbdhint { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 10px; font-weight: 700; color: var(--quiet); }
+
+  /* Home: realms as a grid of cards */
+  .realmgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
+  .homeactions { grid-template-columns: repeat(2, minmax(0, 260px)); }
+
+  /* Realm: leaderboard left, report panel right */
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 32px; align-items: start; }
+  .split > .side { position: sticky; top: 96px; }
+
+  /* Profile: identity + stats left, history right */
+  .profgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+
+  /* Landing: headline left, preview right */
+  .landgrid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-areas: "a d" "b d" "e d"; column-gap: 40px; row-gap: 18px; align-items: start; }
+  .landticker { margin: 0; border: 3px solid var(--ink); }
+  .landgrid { flex: 1; align-content: center; grid-template-columns: minmax(0, 520px) minmax(0, 1fr); column-gap: 64px; padding-bottom: 24px; }
+  .landgrid > .la { grid-area: a; max-width: 470px; }
+  .landgrid > .ld { max-width: 420px; zoom: 1.3; } .landgrid > .lb { grid-area: b; } .landgrid > .ld { grid-area: d; align-self: center; justify-content: center; } .landgrid > .le { grid-area: e; }
+
+  /* Sheets become centred modals */
+  .overlay { justify-content: center; padding: 32px; }
+  .sheet { max-width: 520px; border: 3px solid var(--ink); box-shadow: 10px 10px 0 var(--ink); padding: 24px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }

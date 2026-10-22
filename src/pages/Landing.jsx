@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { signInWithGoogle } from '../lib/auth.jsx';
 import { BANANA_PATH, ICONS } from '../lib/kela.js';
-import { BananaBg } from '../components/ui.jsx';
+import { BananaBg, useEscape, useTitle } from '../components/ui.jsx';
 
 const INTENTS = {
   create: { kicker: 'TO START A REALM', next: '/create' },
@@ -13,6 +13,9 @@ const INTENTS = {
 export default function Landing() {
   const [intent, setIntent] = useState(null);
   const [busy, setBusy] = useState(false);
+  const close = useCallback(() => setIntent(null), []);
+  useEscape(Boolean(intent), close);
+  useTitle(null);
 
   async function go() {
     setBusy(true);
@@ -20,7 +23,7 @@ export default function Landing() {
   }
 
   return (
-    <div className="screen">
+    <div className="screen wide">
       <BananaBg />
       <div className="row between" style={{ position: 'relative', height: 52, background: '#000', padding: '0 16px' }}>
         <div className="tiny" style={{ color: 'var(--banana)', letterSpacing: 1 }}>KELA COUNTER</div>
@@ -28,7 +31,8 @@ export default function Landing() {
       </div>
 
       <div className="content" style={{ gap: 14 }}>
-        <h1 style={{ position: 'relative', margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
+       <div className="landgrid">
+        <h1 className="la" style={{ position: 'relative', margin: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
           <svg aria-hidden="true" viewBox="0 0 24 24" style={{ position: 'absolute', top: 18, right: -40, width: 150, height: 150, transform: 'rotate(-40deg)', zIndex: 1 }}>
             <g transform="translate(0.9 0.9)"><path d={BANANA_PATH} fill="#000" /></g>
             <path d={BANANA_PATH} fill="#FFE135" stroke="#000" strokeWidth="0.9" strokeLinejoin="round" />
@@ -39,13 +43,14 @@ export default function Landing() {
           <span style={{ fontFamily: 'var(--head)', fontSize: 'clamp(40px, 13vw, 52px)', lineHeight: 0.9, letterSpacing: -2, marginTop: 10, marginLeft: 6 }}>COUNTER</span>
         </h1>
 
-        <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.4 }}>Who's eating the most kele this week?</div>
-
-        <div aria-hidden="true" className="ticker" style={{ margin: '0 -16px', borderTop: '3px solid #000' }}>
-          AYAAN +2 // SHERY +3 PENDING // HUZAIFA +0.5 SELF // URWAH +1 // AYAAN +2
+        <div className="lb col" style={{ gap: 14 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.4 }}>Who's eating the most kele this week?</div>
+          <div aria-hidden="true" className="ticker landticker" style={{ borderTop: '3px solid #000' }}>
+            AYAAN +2 // SHERY +3 PENDING // HUZAIFA +0.5 SELF // URWAH +1 // AYAAN +2
+          </div>
         </div>
 
-        <div className="row gap14" style={{ flex: 1, minHeight: 300 }}>
+        <div className="row gap14 ld" style={{ flex: 1, minHeight: 300 }}>
           <div style={{ width: 170, height: 302, flexShrink: 0, border: '3px solid #000', background: 'var(--paper)', boxShadow: '6px 6px 0 #000', display: 'flex', flexDirection: 'column', transform: 'rotate(-4deg)' }} aria-hidden="true">
             <div className="row between" style={{ background: '#000', color: 'var(--banana)', padding: '4px 8px', fontSize: 8, fontWeight: 700 }}><span>KELA ALERT</span><span>WEEK 1</span></div>
             <div className="col gap6" style={{ flex: 1, padding: 8, minHeight: 0 }}>
@@ -74,17 +79,20 @@ export default function Landing() {
           </div>
         </div>
 
-        <button className="btn" onClick={() => setIntent('create')}>Start a realm</button>
-        <button className="btn white" style={{ minHeight: 54, fontSize: 17 }} onClick={() => setIntent('code')}>I have a code</button>
-        <div className="row gap14 tiny" style={{ justifyContent: 'center', position: 'relative' }}>
-          <Link to="/privacy">Privacy</Link>
-          <Link to="/terms">Terms</Link>
+        <div className="le col" style={{ gap: 14 }}>
+          <button className="btn" onClick={() => setIntent('create')}>Start a realm</button>
+          <button className="btn white" style={{ minHeight: 54, fontSize: 17 }} onClick={() => setIntent('code')}>I have a code</button>
+          <div className="row gap14 tiny" style={{ justifyContent: 'center', position: 'relative' }}>
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms">Terms</Link>
+          </div>
         </div>
+       </div>
       </div>
 
       {intent && (
         <div className="overlay" onClick={(e) => e.target === e.currentTarget && setIntent(null)}>
-          <div role="dialog" aria-label="Sign in" className="sheet">
+          <div role="dialog" aria-modal="true" aria-label="Sign in" className="sheet">
             <div className="label">{INTENTS[intent].kicker}</div>
             <div className="h2" style={{ fontSize: 28 }}>Sign in first</div>
             <button className="btn white" style={{ boxShadow: '5px 5px 0 #000', fontSize: 16 }} onClick={go} disabled={busy}>
