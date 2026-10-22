@@ -12,6 +12,7 @@ import CreateRealm from './pages/CreateRealm.jsx';
 import Leaderboard from './pages/Leaderboard.jsx';
 import Report from './pages/Report.jsx';
 import MyProfile from './pages/MyProfile.jsx';
+import { Privacy, Terms } from './pages/Legal.jsx';
 
 function AuthReturn() {
   const { ready, session, profile } = useAuth();
@@ -58,6 +59,8 @@ export default function App() {
         <Route path="/realm/:id" element={<RequireProfile><Leaderboard /></RequireProfile>} />
         <Route path="/realm/:id/report" element={<RequireProfile><Report /></RequireProfile>} />
         <Route path="/me" element={<RequireProfile><MyProfile /></RequireProfile>} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
         <Route path="*" element={<Root />} />
       </Routes>
     </AuthProvider>

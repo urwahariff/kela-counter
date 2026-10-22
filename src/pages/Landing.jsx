@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { signInWithGoogle } from '../lib/auth.jsx';
 import { BANANA_PATH, ICONS } from '../lib/kela.js';
 import { BananaBg } from '../components/ui.jsx';
@@ -75,6 +76,10 @@ export default function Landing() {
 
         <button className="btn" onClick={() => setIntent('create')}>Start a realm</button>
         <button className="btn white" style={{ minHeight: 54, fontSize: 17 }} onClick={() => setIntent('code')}>I have a code</button>
+        <div className="row gap14 tiny" style={{ justifyContent: 'center', position: 'relative' }}>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/terms">Terms</Link>
+        </div>
       </div>
 
       {intent && (
@@ -85,7 +90,7 @@ export default function Landing() {
             <button className="btn white" style={{ boxShadow: '5px 5px 0 #000', fontSize: 16 }} onClick={go} disabled={busy}>
               {busy ? 'Opening Google…' : 'Continue with Google'}
             </button>
-            <div className="tiny" style={{ lineHeight: 1.4 }}>We only use your Google name and email to set up your account.</div>
+            <div className="tiny" style={{ lineHeight: 1.4 }}>We only use your Google name and email to set up your account. <Link to="/privacy">Privacy</Link> · <Link to="/terms">Terms</Link></div>
             <button className="linkbtn" style={{ alignSelf: 'center' }} onClick={() => setIntent(null)}>Cancel</button>
           </div>
         </div>
