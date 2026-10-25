@@ -1,11 +1,22 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { friendlyError, supabase } from '../lib/supabase.js';
+import { avatarUrl, friendlyError, supabase } from '../lib/supabase.js';
 import { useAuth } from '../lib/auth.jsx';
 import { daysToReset, hoursLeft, HISTORY_LABELS, kele, splitKele, realmWeek } from '../lib/kela.js';
 import { Avatar, BottomNav, ErrorBox, Loading, TopBar, useEscape, useTitle, useWide } from '../components/ui.jsx';
 import { ReportPanel } from './Report.jsx';
 import { CopyButton, inviteLink, shareOnWhatsApp } from './CreateRealm.jsx';
+
+// The share-card renderer is only needed when someone shares, so load it on demand
+const loadShareCard = () => import('../lib/shareCard.js');
+
+function ShareIcon({ color = 'currentColor' }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="square" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 3v12M7 8l5-5 5 5M5 13v8h14v-8" />
+    </svg>
+  );
+}
 
 function Big({ half, size = 26, frac = 14 }) {
   const s = splitKele(half);
@@ -24,10 +35,16 @@ export default function Leaderboard() {
   const [note, setNote] = useState('');
   const [settings, setSettings] = useState(false);
   const [leaveStep, setLeaveStep] = useState('idle');
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareMsg, setShareMsg] = useState('');
+  const [shareBusy, setShareBusy] = useState(false);
+  const shareCanvas = useRef(null);
   const wide = useWide();
   const location = useLocation();
   const closeSettings = useCallback(() => setSettings(false), []);
   useEscape(settings, closeSettings);
+  const closeShare = useCallback(() => setShareOpen(false), []);
+  useEscape(shareOpen, closeShare);
   useTitle(realm ? realm.name : 'Realm');
 
   const load = useCallback(async () => {
@@ -49,6 +66,23 @@ export default function Leaderboard() {
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [id, load]);
+
+  // Draw the leaderboard card whenever the share sheet is open (and redraw if scores change live)
+  useEffect(() => {
+    if (!shareOpen || !realm || !rows || !shareCanvas.current) return;
+    const data = {
+      realmName: realm.name,
+      week: realmWeek(realm.created_at),
+      daysLeft: daysToReset(),
+      lastSultan,
+      rows: rows.map((r) => ({
+        name: r.name, color: r.color, icon: r.icon, rank: r.rank, weekHalf: r.week_half,
+        isMe: r.user_id === user.id,
+        photoUrl: r.photo_path && r.photo_on_cards ? avatarUrl(r.photo_path) : null
+      }))
+    };
+    loadShareCard().then(({ drawLeaderboardCard }) => shareCanvas.current && drawLeaderboardCard(shareCanvas.current, data));
+  }, [shareOpen, realm, rows, lastSultan, user.id]);
 
   if (realm === false) {
     return (
@@ -154,6 +188,10 @@ export default function Leaderboard() {
           </div>
         )}
 
+        <button className="btn black sm" style={{ gap: 10 }} onClick={() => { setShareMsg(''); setShareOpen(true); }}>
+          <ShareIcon /> Share leaderboard
+        </button>
+
         {rows.length === 1 && (
           <div className="card shadow col gap10" style={{ background: 'var(--blue)', padding: 14 }}>
             <div className="h2" style={{ fontSize: 22 }}>It's just you here</div>
@@ -196,6 +234,30 @@ export default function Leaderboard() {
       </div>
 
       <BottomNav active="realms" kelaTo={`/realm/${id}/report`} />
+
+      {shareOpen && (
+        <div className="overlay" onClick={(e) => e.target === e.currentTarget && setShareOpen(false)}>
+          <div role="dialog" aria-modal="true" aria-label="Share leaderboard" className="sheet paper" style={{ gap: 14, alignItems: 'center' }}>
+            <div className="row between" style={{ alignSelf: 'stretch', alignItems: 'flex-start' }}>
+              <div className="col gap6"><div className="label">Share leaderboard</div><div className="h2" style={{ fontSize: 26 }}>Week {realmWeek(realm.created_at)}</div></div>
+              <button className="chipbtn head" style={{ width: 40, fontSize: 18 }} aria-label="Close" onClick={() => setShareOpen(false)}>X</button>
+            </div>
+            <canvas ref={shareCanvas} style={{ width: 288, maxWidth: '100%', aspectRatio: '9 / 16', boxShadow: '6px 6px 0 #000', background: '#fff' }}
+              aria-label={`Leaderboard card for ${realm.name}`} />
+            <div className="small" style={{ textAlign: 'center' }}>Shows this week's kele for everyone in the realm. Feeders are never on the card.</div>
+            {shareMsg && <div role="status" className="okbox" style={{ alignSelf: 'stretch', textAlign: 'center' }}>{shareMsg}</div>}
+            <button className="btn pink" style={{ alignSelf: 'stretch', gap: 10 }} disabled={shareBusy} onClick={async () => {
+              setShareBusy(true);
+              try {
+                const { saveAndShare } = await loadShareCard();
+                const slug = realm.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'realm';
+                const how = await saveAndShare(shareCanvas.current, `kela-leaderboard-${slug}-week-${realmWeek(realm.created_at)}.png`, `${realm.name} leaderboard`);
+                setShareMsg(how === 'shared' ? 'SHARED!' : 'SAVED: 1080 × 1920 PNG');
+              } finally { setShareBusy(false); }
+            }}><ShareIcon /> Save &amp; Share</button>
+          </div>
+        </div>
+      )}
 
       {settings && (
         <div className="overlay" onClick={(e) => e.target === e.currentTarget && setSettings(false)}>
